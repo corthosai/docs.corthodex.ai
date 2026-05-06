@@ -1,11 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-// starlight-openapi is wired in Phase 2 once api.corthodex.ai's openapi.yaml
-// lands in the codex cache. Until then importing it is harmless but the
-// plugin block at the bottom of this file stays commented to avoid a build
-// error from the missing schema file.
-// import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 
 // https://astro.build/config
 export default defineConfig({
@@ -65,16 +61,15 @@ export default defineConfig({
 					],
 				},
 				{
-					label: 'Querying',
+					label: 'Datasets',
 					items: [
-						{ label: 'Filters', link: '/api/filters/' },
-						{ label: 'Cohorts', link: '/api/cohorts/' },
-						{ label: 'Metadata', link: '/api/metadata/' },
-						{ label: 'Include & merge', link: '/api/include-merge/' },
+						{ label: 'List datasets', link: '/api/datasets/' },
+						{ label: 'Fetching records', link: '/api/records/' },
+						{ label: 'Dataset metadata', link: '/api/metadata/' },
 						{ label: 'Examples', link: '/api/examples/' },
 					],
 				},
-				// ...openAPISidebarGroups,  // re-enable in Phase 2 with the import above
+				...openAPISidebarGroups,
 				{
 					label: 'Troubleshooting',
 					items: [
@@ -82,15 +77,15 @@ export default defineConfig({
 					],
 				},
 			],
-			// plugins: [
-			// 	starlightOpenAPI([
-			// 		{
-			// 			base: 'reference',
-			// 			schema: './src/content/docs/api/openapi.yaml',
-			// 			label: 'API Reference',
-			// 		},
-			// 	]),
-			// ],
+			plugins: [
+				starlightOpenAPI([
+					{
+						base: 'reference',
+						schema: './src/content/docs/api/openapi.yaml',
+						label: 'API Reference',
+					},
+				]),
+			],
 		}),
 	],
 });
