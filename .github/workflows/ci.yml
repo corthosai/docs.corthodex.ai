@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# CI does NOT run `fractary-codex sync` — that's done manually or by Amplify
+# (where the token is configured in the Amplify console). CI's job is light:
+# verify deps install and the codebase typechecks. Full-site build verification
+# happens in Amplify, since it requires synced content.
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck (Astro + MDX)
+        run: npx astro check

@@ -1,0 +1,63 @@
+/*
+ * Starlight theme overrides for docs.corthography.ai.
+ *
+ * Starlight's accent color is a Tailwind-style 11-step scale; setting
+ * --sl-color-accent-low / -accent / -accent-high and the matching
+ * dark-mode pair gives us a coherent brand color for links, focus
+ * rings, sidebar selection, and the splash hero accent.
+ *
+ * Pick one block below by uncommenting it; comment the others. Generate
+ * additional palettes with https://starlight.astro.build/guides/css-and-tailwind/#theming
+ */
+
+/* ----- Active: ink (deep blue-black, "press" / publishing feel) ----- */
+:root {
+	--sl-color-accent-low: #131e4f;
+	--sl-color-accent: #3447ad;
+	--sl-color-accent-high: #c0cdfb;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #eceef2;
+	--sl-color-gray-2: #c0c2c7;
+	--sl-color-gray-3: #888b96;
+	--sl-color-gray-4: #545861;
+	--sl-color-gray-5: #353841;
+	--sl-color-gray-6: #24272f;
+	--sl-color-black: #17181c;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #c0cdfb;
+	--sl-color-accent: #2f3fa0;
+	--sl-color-accent-high: #182265;
+}
+
+/* ----- Alternative: forest (deep green, "documents grow" feel) -----
+:root {
+	--sl-color-accent-low: #0f2e1e;
+	--sl-color-accent: #2d8c5c;
+	--sl-color-accent-high: #b6e6cd;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #b6e6cd;
+	--sl-color-accent: #1f6b41;
+	--sl-color-accent-high: #0f2e1e;
+}
+*/
+
+/* ----- Alternative: ember (warm amber, distinctive, less corporate) -----
+:root {
+	--sl-color-accent-low: #3a1d04;
+	--sl-color-accent: #d77a1f;
+	--sl-color-accent-high: #fad7a8;
+}
+:root[data-theme='light'] {
+	--sl-color-accent-low: #fad7a8;
+	--sl-color-accent: #a35a0e;
+	--sl-color-accent-high: #3a1d04;
+}
+*/
+
+/* Splash hero: lighten the tagline a touch so it's distinct from
+ * the main title without losing legibility. */
+.hero .tagline {
+	max-width: 60ch;
+}

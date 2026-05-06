@@ -1,0 +1,33 @@
+---
+title: Corthodex API
+description: REST API for Corthodex education + employment data.
+template: splash
+hero:
+  tagline: Query colleges, programs, occupations, and rankings with rich filter, cohort, and metadata operations.
+  actions:
+    - text: Quickstart
+      link: /quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: API Reference
+      link: /reference/
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Where to start
+
+<CardGrid stagger>
+  <Card title="API overview" icon="open-book">
+    [What this API exposes, base URLs, versioning, request basics](/api/overview/)
+  </Card>
+  <Card title="Authentication" icon="seti:lock">
+    [The `X-API-Key` model and how to get a key](/api/authentication/)
+  </Card>
+  <Card title="Filters" icon="magnifier">
+    [Query grammar, operators, CIP / SOC code filtering](/api/filters/)
+  </Card>
+  <Card title="API Reference" icon="document">
+    [Full OpenAPI 3.0 reference](/reference/)
+  </Card>
+</CardGrid>

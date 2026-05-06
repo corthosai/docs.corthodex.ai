@@ -1,0 +1,24 @@
+# Astro / Starlight
+node_modules/
+dist/
+.astro/
+.cache/
+
+# Editor
+.vscode/
+
+# ===== fractary-logs (managed) =====
+logs/_archive/
+# ===== end fractary-logs =====
+
+# ===== fractary-docs (managed) =====
+docs/_archive/
+# ===== end fractary-docs =====
+
+# Claude Code worktrees
+.claude/worktrees/
+.claude/scheduled_tasks.lock
+
+.env
+.env.*
+!.env.example
