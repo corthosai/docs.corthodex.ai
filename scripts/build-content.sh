@@ -40,17 +40,16 @@ copy_api_source() {
   cp "$src/docs/api/authentication.md" "$dst/authentication.md"
   cp "$src/docs/api/errors.md" "$dst/errors.md"
   cp "$src/docs/api/pagination.md" "$dst/pagination.md"
-  cp "$src/docs/api/filters.md" "$dst/filters.md"
-  cp "$src/docs/api/cohorts.md" "$dst/cohorts.md"
+  cp "$src/docs/api/datasets.md" "$dst/datasets.md"
+  cp "$src/docs/api/records.md" "$dst/records.md"
   cp "$src/docs/api/metadata.md" "$dst/metadata.md"
-  cp "$src/docs/api/include-merge.md" "$dst/include-merge.md"
   cp "$src/docs/api/examples.md" "$dst/examples.md"
 
   # OpenAPI spec lives at the api section root for starlight-openapi to
   # pick up (configured in astro.config.mjs).
   cp "$src/openapi.yaml" "$dst/openapi.yaml"
 
-  echo "  api: 9 narratives + openapi.yaml staged at $dst"
+  echo "  api: 8 narratives + openapi.yaml staged at $dst"
 }
 
 main() {

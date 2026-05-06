@@ -1,0 +1,470 @@
+openapi: 3.0.0
+info:
+  title: Corthodex API
+  description: API for accessing structured JSON datasets published by the Corthodex core system
+  version: 1.0.0
+  contact:
+    name: Corthos Team
+    url: https://corthodex.ai
+  license:
+    name: Private
+    
+servers:
+  - url: https://api.corthodex.ai
+    description: Production server
+  - url: https://api-test.corthodex.ai
+    description: Test server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the API
+      security: []
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              
+  /datasets:
+    get:
+      summary: List available datasets
+      description: Retrieve a paginated list of available datasets with optional filtering
+      parameters:
+        - name: limit
+          in: query
+          description: Number of datasets to return (1-1000)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 50
+        - name: offset
+          in: query
+          description: Number of datasets to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: tag
+          in: query
+          description: Filter by tag
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+        - name: namespace
+          in: query
+          description: Filter by namespace
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+        - name: collection
+          in: query
+          description: Filter by collection
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+      responses:
+        '200':
+          description: List of datasets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          
+  /datasets/{namespace}/{collection}:
+    get:
+      summary: Get dataset data
+      description: Retrieve data from a specific dataset with pagination support
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          description: Dataset namespace
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+        - name: collection
+          in: path
+          required: true
+          description: Dataset collection
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+        - name: limit
+          in: query
+          description: Number of records to return (1-10000)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+            default: 1000
+        - name: offset
+          in: query
+          description: Number of records to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: fields
+          in: query
+          description: Comma-separated list of fields to include
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9_]+(,[a-zA-Z0-9_]+)*$'
+      responses:
+        '200':
+          description: Dataset data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+          
+  /datasets/{namespace}/{collection}/metadata:
+    get:
+      summary: Get dataset metadata
+      description: Retrieve comprehensive metadata for a specific dataset
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          description: Dataset namespace
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+        - name: collection
+          in: path
+          required: true
+          description: Dataset collection
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9-_]+$'
+      responses:
+        '200':
+          description: Dataset metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetadataResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              example: "ok"
+            timestamp:
+              type: string
+              format: date-time
+            environment:
+              type: string
+              example: "prod"
+            version:
+              type: string
+              example: "1.0.0"
+            uptime:
+              type: number
+            services:
+              type: object
+              properties:
+                s3:
+                  type: string
+                  example: "ok"
+                lambda:
+                  type: string
+                  example: "ok"
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+          
+    DatasetListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            datasets:
+              type: array
+              items:
+                $ref: '#/components/schemas/Dataset'
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+          
+    DatasetResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            namespace:
+              type: string
+              example: "nursing"
+            collection:
+              type: string
+              example: "school-rankings"
+            data:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+        pagination:
+          $ref: '#/components/schemas/PaginationInfo'
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+          
+    MetadataResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/DatasetMetadata'
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+          
+    Dataset:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "nursing-school-rankings"
+        namespace:
+          type: string
+          example: "nursing"
+        collection:
+          type: string
+          example: "school-rankings"
+        title:
+          type: string
+          example: "Top Nursing Schools Rankings"
+        description:
+          type: string
+          example: "Rankings of nursing schools by ROI and employment rates"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["nursing", "education", "rankings"]
+        recordCount:
+          type: integer
+          example: 500
+        lastUpdated:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "v1.2"
+        size:
+          type: integer
+          example: 1048576
+        format:
+          type: string
+          example: "json"
+          
+    DatasetMetadata:
+      allOf:
+        - $ref: '#/components/schemas/Dataset'
+        - type: object
+          properties:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/FieldSchema'
+            freshness:
+              $ref: '#/components/schemas/FreshnessInfo'
+            lineage:
+              $ref: '#/components/schemas/LineageInfo'
+              
+    FieldSchema:
+      type: object
+      properties:
+        field:
+          type: string
+          example: "school_name"
+        type:
+          type: string
+          enum: ["string", "number", "boolean", "date", "object", "array"]
+          example: "string"
+        description:
+          type: string
+          example: "Name of the nursing school"
+        required:
+          type: boolean
+          example: true
+        nullable:
+          type: boolean
+          example: false
+        constraints:
+          type: object
+          properties:
+            min:
+              type: number
+            max:
+              type: number
+            pattern:
+              type: string
+            enum:
+              type: array
+              items:
+                type: string
+                
+    FreshnessInfo:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        sourceLastModified:
+          type: string
+          format: date-time
+        ageHours:
+          type: integer
+          example: 6
+        status:
+          type: string
+          enum: ["fresh", "stale", "unknown"]
+          example: "fresh"
+          
+    LineageInfo:
+      type: object
+      properties:
+        sourceQuery:
+          type: string
+          example: "SELECT * FROM nursing_schools WHERE accredited = true"
+        sourceSystem:
+          type: string
+          example: "corthodex-warehouse"
+        dependencies:
+          type: array
+          items:
+            type: string
+            
+    PaginationInfo:
+      type: object
+      properties:
+        limit:
+          type: integer
+          example: 50
+        offset:
+          type: integer
+          example: 0
+        total:
+          type: integer
+          example: 1000
+        hasMore:
+          type: boolean
+          example: true
+          
+    ResponseMetadata:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: "req-123456"
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "1.0"
+        processingTime:
+          type: integer
+          example: 150
+          
+    ApiError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "NOT_FOUND"
+            message:
+              type: string
+              example: "Dataset not found"
+            details:
+              type: object
+              additionalProperties: true
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+          
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+            
+    Unauthorized:
+      description: Unauthorized - API key required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+            
+    Forbidden:
+      description: Forbidden - insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+            
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
