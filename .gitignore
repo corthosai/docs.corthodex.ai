@@ -19,6 +19,9 @@ docs/_archive/
 .claude/worktrees/
 .claude/scheduled_tasks.lock
 
+# Fractary Codex MCP cache
+.fractary/codex/cache/
+
 .env
 .env.*
 !.env.example
